@@ -1,5 +1,4 @@
 const express = require("express");
-const {chats} = require("./data/data");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
@@ -15,9 +14,7 @@ app.use(express.json());
 // app.get("/",(req,res) => {
 //     res.send("Api is running");
 // });
-// app.get("/api/chat",(req,res) => {
-//     res.send(chats);
-// });
+
 app.use("/api/user",userRoutes);
 app.use("/api/chat",chatRoutes);
 app.use("/api/message",messageRoutes);
