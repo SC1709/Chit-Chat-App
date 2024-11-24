@@ -1,4 +1,4 @@
 .env
 README.md
 node_modules
-/data
+backend/data/
