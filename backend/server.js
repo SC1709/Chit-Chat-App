@@ -6,6 +6,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const {notFound,errorHandler} = require("./middleware/errorMiddleware");
 const cors = require('cors');
+const frontendUrl = process.env.FRONTEND_URL;
 
 dotenv.config();        
 connectDB();
@@ -13,7 +14,7 @@ const app = express();
 
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: frontendUrl,
     credentials: true,
   }));
   
@@ -35,7 +36,7 @@ const server = app.listen(port, console.log(`server running on PORT : ${port}`))
 const io = require("socket.io")(server,{
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:3000",
+        origin: frontendUrl,
     }
 });
 
