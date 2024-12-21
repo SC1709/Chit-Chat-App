@@ -11,6 +11,7 @@ import {
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -99,7 +100,7 @@ const Signup = () => {
         },
       };
       const { data } = await axios.post(
-        "/api/user",
+        `${apiUrl}/api/user`,
         {
           name,
           email,

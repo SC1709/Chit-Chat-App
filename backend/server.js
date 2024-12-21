@@ -5,11 +5,18 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const {notFound,errorHandler} = require("./middleware/errorMiddleware");
+const cors = require('cors');
 
 dotenv.config();        
 connectDB();
 const app = express();
 
+
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }));
+  
 app.use(express.json());
 // app.get("/",(req,res) => {
 //     res.send("Api is running");
