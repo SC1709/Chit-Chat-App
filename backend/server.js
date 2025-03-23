@@ -7,10 +7,13 @@ const messageRoutes = require("./routes/messageRoutes");
 const {notFound,errorHandler} = require("./middleware/errorMiddleware");
 const cors = require('cors');
 const frontendUrl = process.env.FRONTEND_URL;
+const multer = require("multer");
+const path = require("path");
 
 dotenv.config();        
 connectDB();
 const app = express();
+
 
 
 app.use(cors({
@@ -19,6 +22,8 @@ app.use(cors({
   }));
   
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
 // app.get("/",(req,res) => {
 //     res.send("Api is running");
 // });

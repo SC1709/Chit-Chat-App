@@ -4,3 +4,16 @@
     overflow-y: scroll;
     scrollbar-width: none;
 }
+.message-container {
+    position: relative;
+  }
+  
+  .message-container:hover .delete-icon {
+    opacity: 1; /* Show the delete icon on hover */
+  }
+  
+  .delete-icon {
+    opacity: 0; /* Hide by default */
+    transition: opacity 0.3s ease; /* Smooth transition */
+  }
+  

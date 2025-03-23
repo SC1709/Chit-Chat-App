@@ -10,7 +10,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowUpIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowUpIcon, AttachmentIcon } from "@chakra-ui/icons";
 import { getSender, getSenderFull } from "./../config/ChatLogics";
 import ProfileModel from "./miscellaneous/ProfileModel";
 import UpdateGroupChatModel from "./miscellaneous/UpdateGroupChatModel";
@@ -32,7 +32,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
   const toast = useToast();
 
   const fetchMessage = async () => {
@@ -113,14 +115,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
     // }
   };
-  
+
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageReceived.chat._id
       ) {
-        if(!notification.includes(newMessageReceived)){
+        if (!notification.includes(newMessageReceived)) {
           setNotification([newMessageReceived, ...notification]);
           setFetchAgain(!fetchAgain);
         }
@@ -150,6 +152,66 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setTyping(false);
       }
     }, timeLength);
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm("Are you sure you want to delete this message?"))
+      return;
+    console.log(messageId);
+
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${user.token}` },
+      };
+      await axios.delete(`${apiUrl}/api/message/${messageId}`, config);
+      setMessage(message.filter((m) => m._id !== messageId)); // Update the message list locally
+      // window.location.reload();
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+      toast({
+        title: "Error Occurred",
+        description: "Failed to delete the Message",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("chatId", selectedChat._id);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.post(
+        `${apiUrl}/api/message/upload`,
+        formData,
+        config
+      );
+
+      socket.emit("new message", data);
+      setMessage([...message, data]);
+      setSelectedFile(null);
+    } catch (error) {
+      toast({
+        title: "File Upload Error",
+        description: "Failed to upload the file. Please try again.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
   };
 
   return (
@@ -211,7 +273,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
               <div className="messages">
                 {" "}
-                <ScrollableChat message={message} />{" "}
+                <ScrollableChat
+                  message={message}
+                  handleDeleteMessage={handleDeleteMessage}
+                />{" "}
               </div>
             )}
 
@@ -240,6 +305,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     if (event.key === "Enter") sendMessage();
                   }}
                 />
+                <input
+                  type="file"
+                  style={{ display: "none" }}
+                  onChange={(e) => setSelectedFile(e.target.files[0])}
+                  id="file-input"
+                />
+                <label htmlFor="file-input">
+                  <IconButton
+                    as="span"
+                    icon={<AttachmentIcon />}
+                    colorScheme="teal"
+                    // onClick={handleFileUpload}
+                  />
+                </label>
+                <Button
+                  variant="solid"
+                  colorScheme="blue"
+                  size="sm"
+                  onClick={handleFileUpload}
+                  ml={2}
+                  isDisabled={!selectedFile} // Disable if no file is selected
+                >
+                  Upload
+                </Button>
                 <Button
                   variant="solid"
                   colorScheme="blue"
