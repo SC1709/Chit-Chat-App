@@ -12,10 +12,8 @@ dotenv.config();
 connectDB();
 const app = express();
 
-
-
 app.use(cors({
-    origin: "https://chit-chat-app-q7xh.onrender.com",
+    origin: "http://localhost:3000",
     credentials: true,
   }));
   
@@ -39,7 +37,7 @@ const server = app.listen(port, console.log(`server running on PORT : ${port}`))
 const io = require("socket.io")(server,{
     pingTimeout: 60000,
     cors: {
-        origin: "https://chit-chat-app-q7xh.onrender.com",
+        origin: "http://localhost:3000",
     }
 });
 

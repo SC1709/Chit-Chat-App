@@ -18,9 +18,15 @@ const messageModel = mongoose.Schema(
       type: Boolean,
     },
     fileType: {
-      type: String, // Stores file path or URL if a file is uploaded
-      default: null, // Optional file
+      type: String, 
+      default: null, 
     },
+    reactions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        emoji: { type: String },
+      },
+    ],
   },
   {
     timestamps: true,

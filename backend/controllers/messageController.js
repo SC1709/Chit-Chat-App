@@ -85,12 +85,12 @@ const uploadFileMessage = async (req, res) => {
 };
 const deleteMessage = asyncHandler(async (req, res) => {
   const { messageId } = req.params;
-console.log(messageId);
-console.log("Type of messageId:", typeof messageId);
+  console.log(messageId);
+  console.log("Type of messageId:", typeof messageId);
 
   try {
     const message = await Message.findById(messageId);
-console.log(message);
+    console.log(message);
 
     if (!message) {
       return res.status(404).json({ message: "Message not found" });
@@ -98,23 +98,28 @@ console.log(message);
 
     // Check if the requesting user is the sender of the message
     if (message.sender.toString() !== req.user._id.toString()) {
-      return res.status(401).json({ message: "You can only delete your own messages" });
+      return res
+        .status(401)
+        .json({ message: "You can only delete your own messages" });
     }
-       // Remove the associated file if the message contains a file and isFile is true
-       if (message.isFile && message.content) {
-        const filePath = path.join(__dirname, "../uploads", path.basename(message.content));
-        console.log("Attempting to delete file:", filePath);
-  
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error(`Failed to delete file: ${filePath}`, err);
-          } else {
-            console.log(`File deleted: ${filePath}`);
-          }
-        });
-      }
-  
-    // Directly delete the message using findByIdAndDelete
+    // Remove the associated file if the message contains a file and isFile is true
+    if (message.isFile && message.content) {
+      const filePath = path.join(
+        __dirname,
+        "../uploads",
+        path.basename(message.content)
+      );
+      console.log("Attempting to delete file:", filePath);
+
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error(`Failed to delete file: ${filePath}`, err);
+        } else {
+          console.log(`File deleted: ${filePath}`);
+        }
+      });
+    }
+
     await Message.findByIdAndDelete(messageId);
     res.json({ message: "Message deleted successfully" });
   } catch (error) {
@@ -123,5 +128,51 @@ console.log(message);
   }
 });
 
+const reactToMessage = asyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+  const { emoji } = req.body;
+  try {
+    // console.log("Incoming emoji reaction:", req.body, "for message:", req.params.messageId);
+    const message = await Message.findById(messageId);
 
-module.exports = { sendMessage, allMessages, uploadFileMessage,deleteMessage };
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    const userId = req.user._id.toString();
+
+    const existingReactionIndex = message.reactions.findIndex(
+      (r) => r.user.toString() === userId && r.emoji === emoji
+    );
+
+    if (existingReactionIndex !== -1) {
+      message.reactions.splice(existingReactionIndex, 1);
+    } else {
+      message.reactions = message.reactions.filter(
+        (r) => r.user.toString() !== userId
+      );
+      // Add the new one here
+      message.reactions.push({ user: req.user._id, emoji });
+    }
+
+    await message.save();
+
+    const updatedMessage = await Message.findById(messageId)
+      .populate("sender", "name pic")
+      .populate("chat")
+      .populate("reactions.user", "name pic email");
+
+    res.json(updatedMessage);
+  } catch (error) {
+    console.error("React Error:", error.message);
+    res.status(500).send("Server error while reacting to message");
+  }
+});
+
+module.exports = {
+  sendMessage,
+  allMessages,
+  uploadFileMessage,
+  deleteMessage,
+  reactToMessage,
+};

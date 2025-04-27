@@ -20,6 +20,7 @@ import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie-player";
 import animationData from "../animation/typing.json";
 import io from "socket.io-client";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ENDPOINT = process.env.REACT_APP_API_URL;
@@ -33,6 +34,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [showEmojiPickerForMessage, setShowEmojiPickerForMessage] =
+    useState(null);
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
   const toast = useToast();
@@ -214,6 +217,39 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
+  const handleReactToMessage = async (messageId, emoji) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `${apiUrl}/api/message/${messageId}/react`,
+        { emoji },
+        config
+      );
+
+      // update reactions in message array
+      const updatedMessages = message.map((m) =>
+        m._id === messageId ? data : m
+      );
+      setMessage(updatedMessages);
+      setShowEmojiPickerForMessage(null); // close picker after reacting
+      console.log(`Reacted to message ${messageId} with ${emoji}`);
+    } catch (error) {
+      toast({
+        title: "Reaction Failed",
+        description: "Could not add reaction.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+  };
+
   return (
     <>
       {selectedChat ? (
@@ -276,6 +312,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <ScrollableChat
                   message={message}
                   handleDeleteMessage={handleDeleteMessage}
+                  handleReactToMessage={handleReactToMessage}
+                  showEmojiPickerForMessage={showEmojiPickerForMessage}
+                  setShowEmojiPickerForMessage={setShowEmojiPickerForMessage}
                 />{" "}
               </div>
             )}

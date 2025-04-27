@@ -5,6 +5,7 @@ const {
   allMessages,
   uploadFileMessage,
   deleteMessage,
+  reactToMessage,
 } = require("../controllers/messageController");
 const multer = require("multer");
 const path = require("path");
@@ -43,9 +44,8 @@ const router = express.Router();
 
 router.route("/").post(protect, sendMessage);
 router.route("/:chatId").get(protect, allMessages);
-router.delete("/:messageId", protect, deleteMessage); // Add new delete route
-
-// Route to handle file uploads
+router.delete("/:messageId", protect, deleteMessage); 
 router.post("/upload", protect, upload.single("file"), uploadFileMessage);
+router.route("/:messageId/react").put(protect, reactToMessage);
 
 module.exports = router;
