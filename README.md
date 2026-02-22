@@ -29,12 +29,14 @@ Backend: [https://chit-chat-app-x8xy.onrender.com](https://chit-chat-app-x8xy.on
 ### 🔐 Login Page
 ![Login Page](./frontend/public/screenshots/login.png)
 
-### 🛒 Cart Page
-![Cart](./frontend/public/screenshots/cart.png)
+### 🔎 User Search
+![Cart](./frontend/public/screenshots/usersearch.png)
 
-### 🧾 My Orders Page
-![My Orders Page](./frontend/public/screenshots/myorder.png)
+### 👥 Group Chat
+![My Orders Page](./frontend/public/screenshots/groupchat.png)
 
+### 💬 One-to-One Chat
+![My Orders Page](./frontend/public/screenshots/chat.png)
 --- -->
 
 ## 📸 Screenshots
