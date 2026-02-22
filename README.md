@@ -21,6 +21,57 @@ Backend: [https://chit-chat-app-x8xy.onrender.com](https://chit-chat-app-x8xy.on
 
 ---
 
+<!-- ## 📸 Screenshots
+
+### 🏠 Home Page
+![Home](./frontend/public/screenshots/home.png)
+
+### 🔐 Login Page
+![Login Page](./frontend/public/screenshots/login.png)
+
+### 🛒 Cart Page
+![Cart](./frontend/public/screenshots/cart.png)
+
+### 🧾 My Orders Page
+![My Orders Page](./frontend/public/screenshots/myorder.png)
+
+--- -->
+
+## 📸 Screenshots
+
+<table>
+<tr>
+<td width="50%">
+<h4 align="center">🏠 Home Page</h4>
+<img src="./frontend/public/screenshots/home.png" width="100%" />
+</td>
+<td width="50%">
+<h4 align="center">🔐 Login Page</h4>
+<img src="./frontend/public/screenshots/login.png" width="100%" />
+</td>
+</tr>
+
+<tr>
+<td width="50%">
+<h4 align="center">🔎 User Search</h4>
+<img src="./frontend/public/screenshots/usersearch.png" width="100%" />
+</td>
+<td width="50%">
+<h4 align="center">👥 Group Chat</h4>
+<img src="./frontend/public/screenshots/groupchat.png" width="100%" />
+</td>
+</tr>
+
+<tr>
+<td width="50%">
+<h4 align="center">💬 One-to-One Chat</h4>
+<img src="./frontend/public/screenshots/chat.png" width="100%" />
+</td>
+</tr>
+</table>
+
+---
+
 ## 🛠️ Tech Stack
 
 ### 🖥️ Frontend (User Interface)
